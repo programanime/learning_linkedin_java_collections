@@ -1,61 +1,34 @@
 package com.linkedin;
 
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class BookingService {
 
 	private Map<Room, Guest> bookings = new HashMap<>();
 
-	private RoomService roomService;
+	public boolean book(Room room, Guest guest) {
 
-	public BookingService(RoomService roomService) {
-		this.roomService = roomService;
+		/*
+		 * 1. The provided Guest is placed in the bookings Map and
+		 * associated with the provided room, only if no other guest
+		 * is associated with the room.
+		 * 
+		 * Returns a boolean that indicates if the Guest was
+		 * successfully placed in the room.
+		 */
+		return bookings.putIfAbsent(room, guest) == null;
 	}
 
-	public void book(List<Guest> guests) {
-
-		List<Room> availableRooms = this.roomService.getInventory().stream()
-				.filter(r -> !bookings.containsKey(r))
-				.collect(Collectors.toList());
-
-		List<Room> preferredRooms = guests.stream()
-				.flatMap(g -> g.getPreferredRooms().stream())
-				.collect(Collectors.toList());
-
-		availableRooms.sort(Comparator.comparingInt(r -> preferredRooms.indexOf(r)));
-
-		for (Guest guest : guests) {
-
-			boolean booked = false;
-
-			for (Room room : guest.getPreferredRooms()) {
-
-				if (this.roomService.hasRoom(room)) {
-
-					if (bookings.putIfAbsent(room, guest) == null) {
-						booked = true;
-						availableRooms.remove(room);
-						break;
-					}
-
-				}
-
-			}
-
-			if (!booked) {
-
-				this.bookings.putIfAbsent(availableRooms.remove(0), guest);
-
-			}
-
-		}
-
+	public double totalRevenue() {
+		
+		/*
+		 * 2. Returns a double that totals the rate of each Room booked
+		 * in the bookings Map.
+		 */
+		return bookings.keySet().stream().mapToDouble(Room::getRate).sum();
 	}
-
+	
 	public Map<Room, Guest> getBookings() {
 		return bookings;
 	}

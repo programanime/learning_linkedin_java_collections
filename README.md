@@ -9,9 +9,226 @@ useful to work with data
 is useful to catch most of the problems during compilation time
 
 # Map
+
 key-value collection
 ![](img/java_map.png)  
+![](img/map_model.png)  
 - (key,value) pair is call entry
+- key should be unique
+
+![](img/map_types.png)  
+
+![](img/map_get.png)  
+- get value using key
+
+# Map put
+put returns the current associated value, or null if is new
+
+```java
+Map<String, String> map = new HashMap<>(); 
+map.put("a", "1");
+map.put("b", "2");
+map.put("c", "3");
+String value = map.put("c", "5");
+value;
+```
+# Map key
+![](img/map_key.png)  
+- you need to override hashCode and equals method on the key class
+
+```java
+class Employee{
+    private String name;
+    private Integer age;
+    public Employee(String name, Integer age){
+        this.name=name;
+        this.age=age;
+    }
+    public String getName(){return this.name;}
+    public String setName(String name){return this.name;}
+
+    public Integer getAge(){return this.age;}
+    public Integer setAge(Integer age){return 
+    this.age;}
+
+    @Override
+    public boolean equals(Object obj){
+        if(this == obj){
+            return true;
+        }
+    
+        if(obj == null){
+            return false;
+        }
+    
+        if(getClass() != obj.getClass()){
+            return false;
+        }
+    
+        Employee employee = (Employee)obj;
+    
+        if(name == null){
+            if(employee.getName() != null){
+                return false;
+            }
+        }else if(!name.equals(employee.getName())){
+            return false;
+        }
+    
+        if(age != this.getAge()){
+            return false;
+        }
+    
+        return true;
+    }
+    
+    @Override
+    public int hashCode() {
+        return this.age;
+    }
+} 
+
+Map<Employee,String> mapLastname = new HashMap<Employee, String>();
+mapLastname.put(new Employee("daniel", 1), "yepes");
+mapLastname.put(null, "yepes");
+mapLastname
+```
+
+# LinkedHashMap  
+- preserves the order of the insertion
+```java
+Map<String, String> map = new LinkedHashMap<>(); 
+map.put("a", "1");
+map.put("b", "2");
+map.put("c", "3");
+map;
+```
+
+# HashMap
+![](img/hash.png)  
+- avoid collisions
+    - to there is come collision with the hash value, they the map uses the equals value
+  
+```java
+Map<String, String> map = new HashMap<>(); 
+map.put("a", "1");
+map.put("b", "2");
+map.put("c", "3");
+map;
+```
+![](img/hashmap_deep.png)  
+- it uses an array to stores the entries
+- the default size is 16
+- the has function is execute twice to get the final index in the array
+
+![](img/hashmap_get.png)  
+this happens again for get values
+
+# Hashtable (synchronized)
+useful when you need multithread
+```java
+Map<String, String> map = new Hashtable<>(); 
+map.put("a", "1");
+map.put("b", "2");
+map.put("c", "3");
+map; 
+```
+
+# WeakHashMap 
+```java
+Map<String, String> map = new WeakHashMap<>(); 
+map.put("a", "1");
+map.put("b", "2");
+map.put("c", "3");
+System.gc();
+map;
+```
+
+# IdentityHashMap
+uses "==" instead of "equals"
+
+```java
+class Employee{
+    private String name;
+    private Integer age;
+    public Employee(String name, Integer age){
+        this.name=name;
+        this.age=age;
+    }
+    public String getName(){return this.name;}
+    public String setName(String name){return this.name;}
+
+    public Integer getAge(){return this.age;}
+    public Integer setAge(Integer age){return 
+    this.age;}
+
+    @Override
+    public boolean equals(Object obj){
+        if(this == obj){
+            return true;
+        }
+    
+        if(obj == null){
+            return false;
+        }
+    
+        if(getClass() != obj.getClass()){
+            return false;
+        }
+    
+        Employee employee = (Employee)obj;
+    
+        if(name == null){
+            if(employee.getName() != null){
+                return false;
+            }
+        }else if(!name.equals(employee.getName())){
+            return false;
+        }
+    
+        if(age != this.getAge()){
+            return false;
+        }
+    
+        return true;
+    }
+    
+    @Override
+    public int hashCode() {
+        return this.age;
+    }
+} 
+Map<Employee, String> map = new IdentityHashMap<>(); 
+map.put(new Employee("daniel", 1), "yepes");
+map.put(new Employee("alejo", 1), "yepes");
+map.put(new Employee("daniel", 1), "yepes");
+map.put(new Employee("daniel", 1), "yepes");
+System.gc();
+map;
+```
+
+# Map put if not exists
+```java
+map.putIfAbsent("c", "6");
+```
+this methods returns null if the value was inserted, other way return the value
+
+# Map keySet, entrySet, values
+![](img/map_collection_view.png)  
+let you interact with their internal collections
+
+```java
+Map<Employee, String> map = new IdentityHashMap<>(); 
+map.put(new Employee("daniel", 1), "yepes");
+map.put(new Employee("alejo", 1), "yepes");
+map.put(new Employee("daniel", 1), "yepes");
+map.put(new Employee("daniel", 1), "yepes");
+map.keySet().stream().forEach(System.out::println);
+map.entrySet().stream().forEach(System.out::println);
+
+map.values().stream().forEach(System.out::println);
+```
+# TreeMap
 
 # List
 - linear indexed collection
@@ -21,6 +238,7 @@ key-value collection
 # java collection framework
 ![](img/data_structure_feature.png)
 ![](img/java_collection_framework.png)    
+
 ## collection operations
 - store: some collection store data pretty faster
 - organize: some collections put the new value at the beginning or at the end
@@ -88,6 +306,21 @@ vector.add("molina");
 vector.stream().forEach(System.out::println);
 ```
 # ArrayList  (implementation)
+![](img/arraylist.png)  
+![](img/arraylist_add.png)  
+- good performance reading
+- bad performance adding new elements in any position
+- you can set an initial capacity to avoid to much resizing
+
+```java
+List<String> listFood = new ArrayList<String>(100);
+listFood.addAll(Arrays.asList("milk", "banana", "water", "orange", "rice"));
+```
+
+# LinkedList  (implementation)
+![](img/linked_list.png)  
+- slow performance reading
+- god performance adding elements in any position
 
 # LinkedList (implementation)
 ![](img/java_linkedlist.png)  
@@ -216,7 +449,14 @@ Set.copyOf(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)).stream().forEach(System
 
 # Queue
 ![](img/50289.png)  
-a queue let you add at the end and remove from the beginning, is a FIFO collection
+![](img/queue_hierarchy.png)  
+![](img/queue_methods.png)
+![](img/queue_add_offer.png)  
+![](img/queue_poll_remove.png)  
+![](img/queue_operation_difference.png)  
+- a queue let you add at the end and remove from the beginning, is a FIFO collection
+- collection methods throws exception
+- queue methods return null
 
 # PriorityQueue
 the elements needs to be sorted to determine the priority
@@ -233,11 +473,46 @@ queue.poll();
 queue.peek();
 ```
 
+```java
+class Employee{
+    private String name;
+    private Integer age;
+    public Employee(String name, Integer age){
+        this.name=name;
+        this.age=age;
+    }
+    public String getName(){return this.name;}
+    public String setName(String name){return this.name;}
+
+    public Integer getAge(){return this.age;}
+    public Integer setAge(Integer age){return this.age;}
+
+    public String toString(){
+        return "name: "+this.name+" age: "+this.age;
+    }
+}
+Queue<Employee> queue = new PriorityQueue<>(Comparator.comparing(Employee::getAge).reversed());
+queue.add(new Employee("daniel", 19));
+queue.add(new Employee("alejandro", 88));
+queue.add(new Employee("jose", 33));
+queue.stream().forEach(System.out::println);
+```
+
 # Deque Interface
-let you add and remove from the beginning and the end of the collection
+![](img/deque_model.png)  
+
+# Deque as a Queue
+![](img/deque_methods.png)  
+- let you add and remove from the beginning and the end of the collection
+- offer, poll, peak null()
+- add, remove, get (exception)
+- use first and last prefix
 
 # ArrayDeque Implementation
-implementation base on array
+- implementation base on array
+- useful to represent a queue or a stack
+- java recommends to use Deque as an Stack
+
 ```java
 Deque<String> deque = new ArrayDeque<>();
 deque.addFirst("name first");
@@ -254,6 +529,58 @@ deque.descendingIterator().
 deque.pollFirst();
 deque.stream().forEach(System.out::println);
 deque.pollLast();
+```
+
+# Queue peek vs poll
+- peek just read
+- poll remove and read
+```java
+Queue<String> deque = new ArrayDeque<>();
+deque.offer("daniel");
+deque.poll();
+deque.peek();
+```
+
+# Deque as a Stack
+![](img/deque_stack.png)  
+```java
+Deque<String> stack = new ArrayDeque<>();
+stack.push("daniel");
+stack.push("alejandro");
+stack.push("molina");
+stack.push("yepes");
+stack.pop();
+stack.peak();
+stack.stream().forEach(System.out::println);
+```
+
+
+# List remove
+remove returns a the removed value
+```java
+List<String> list = new ArrayList<>();
+list.add("sample"); 
+list.remove(0);
+```
+
+# List index operations
+- there are lot of operations for list, with index, set is one of them list.set(index, element)
+- add and addAll both of them receive an index
+```java
+List<Integer> numbers = new ArrayList<>();
+numbers.add(1);
+numbers.add(2);
+numbers.add(3);
+numbers.add(5);
+numbers.add(4);
+numbers.get(0);
+numbers.lastIndexOf(6);
+numbers.indexOf(9);
+numbers.set(2, 11);
+numbers.remove(3);
+numbers.subList(0,2);
+numbers.addAll(2, Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+numbers;
 ```
 
 # List sorting
@@ -650,3 +977,228 @@ while(iter.hasNext()){
 listFood.stream().forEach(System.out::println);
 ```
 
+# Collection sum
+```java
+return bookings.keySet().stream().mapToDouble(Room::getRate).sum();
+```
+
+# Ordering elements
+![](img/natural_order.png)  
+```java
+class Employee implements  Comparable<Employee>{
+    private String name;
+    private Integer age;
+    public Employee(String name, Integer age){
+        this.name=name;
+        this.age=age;
+    }
+    public String getName(){return this.name;}
+    public String setName(String name){return this.name;}
+
+    public Integer getAge(){return this.age;}
+    public Integer setAge(Integer age){return this.age;}
+
+    @Override
+    public boolean equals(Object o){
+        Employee employee = (Employee)o;
+        return this.getName().equals(employee.getName());
+    }
+
+    @Override
+    public int compareTo(Employee e){
+        return this.getName().compareTo(e.getName());
+    }
+}
+```
+# compareTo
+if this.compareTo(otherThis) > 0 then is greater
+if this.compareTo(otherThis) <> 0 then is lower
+if this.compareTo(otherThis) = 0 then, the same order
+
+![](img/comparable_result_greater.png)  
+
+# Comparator
+useful class for comparisons
+```java
+Comparator.comparing(Employee::getAge).reversed()
+```
+
+```java
+class Employee{
+    private String name;
+    private Integer age;
+    public Employee(String name, Integer age){
+        this.name=name;
+        this.age=age;
+    }
+    public String getName(){return this.name;}
+    public String setName(String name){return this.name;}
+
+    public Integer getAge(){return this.age;}
+    public Integer setAge(Integer age){return this.age;}
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+}
+List<Employee> listEmployee = new LinkedList<Employee>();
+listEmployee.add(new Employee("daniel", 20));
+listEmployee.add(new Employee("jose", 21));
+listEmployee.add(new Employee("alejandra", 11));
+Collections.sort(listEmployee, Comparator.comparing(Employee::getName));
+listEmployee.sort(Comparator.comparing(Employee::getName));
+listEmployee;
+```
+
+# Collections object
+# Collections sort
+```java
+class Employee implements  Comparable<Employee>{
+    private String name;
+    private Integer age;
+    public Employee(String name, Integer age){
+        this.name=name;
+        this.age=age;
+    }
+    public String getName(){return this.name;}
+    public String setName(String name){return this.name;}
+
+    public Integer getAge(){return this.age;}
+    public Integer setAge(Integer age){return this.age;}
+
+    @Override
+    public boolean equals(Object o){
+        Employee employee = (Employee)o;
+        return this.getName().equals(employee.getName());
+    }
+
+    @Override
+    public int compareTo(Employee e){
+        return this.getName().compareTo(e.getName());
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+}
+List<Employee> listEmployee = new LinkedList<Employee>();
+listEmployee.add(new Employee("daniel", 20));
+listEmployee.add(new Employee("jose", 21));
+listEmployee.add(new Employee("alejandra", 11));
+Collections.sort(listEmployee);
+Collections.sort(listEmployee, Comparator.naturalOrder());
+listEmployee;
+```
+
+# Comparator chain
+```java
+class Employee{
+    private String name;
+    private Integer age;
+    public Employee(String name, Integer age){
+        this.name=name;
+        this.age=age;
+    }
+    public String getName(){return this.name;}
+    public String setName(String name){return this.name;}
+
+    public Integer getAge(){return this.age;}
+    public Integer setAge(Integer age){return this.age;}
+}
+List<Employee> list = new LinkedList<Employee>();
+list.add(new Employee("daniel", 20));
+list.add(new Employee("jose", 21));
+list.add(new Employee("alejandra", 11));
+list.sort(Comparator.comparing(Employee::getName).thenComparing(Employee::getAge).reversed());
+```
+
+# Binary search
+the collection needs to be sorted
+```java
+class Employee{
+    private String name;
+    private Integer age;
+    public Employee(String name, Integer age){
+        this.name=name;
+        this.age=age;
+    }
+    public String getName(){return this.name;}
+    public String setName(String name){return this.name;}
+
+    public Integer getAge(){return this.age;}
+    public Integer setAge(Integer age){return this.age;}
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+}
+List<Employee> list = new LinkedList<Employee>();
+list.add(new Employee("jose", 21));
+list.add(new Employee("daniel", 20));
+list.add(new Employee("alejandra", 11));
+Collections.binarySearch(list, new Employee("daniel", 20), Comparator.comparing(Employee::getName));
+Collections.binarySearch(list, new Employee("dniel", 20), Comparator.comparing(Employee::getName));
+```
+
+# Collections  binarySearch returns
+- returns index of the element
+- return negative number, possible new index of the element if were inserted
+
+# Collections min
+```java
+class Employee{
+    private String name;
+    private Integer age;
+    public Employee(String name, Integer age){
+        this.name=name;
+        this.age=age;
+    }
+    public String getName(){return this.name;}
+    public String setName(String name){return this.name;}
+
+    public Integer getAge(){return this.age;}
+    public Integer setAge(Integer age){return this.age;}
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+}
+List<Employee> list = new LinkedList<Employee>();
+list.add(new Employee("jose", 21));
+list.add(new Employee("daniel", 20));
+list.add(new Employee("alejandra", 111));
+Collections.min(list, Comparator.comparing(Employee::getName));
+Collections.min(list, Comparator.comparing(Employee::getAge));
+```
+
+# Collections max
+```java
+class Employee{
+    private String name;
+    private Integer age;
+    public Employee(String name, Integer age){
+        this.name=name;
+        this.age=age;
+    }
+    public String getName(){return this.name;}
+    public String setName(String name){return this.name;}
+
+    public Integer getAge(){return this.age;}
+    public Integer setAge(Integer age){return this.age;}
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+}
+List<Employee> list = new LinkedList<Employee>();
+list.add(new Employee("jose", 21));
+list.add(new Employee("daniel", 20));
+list.add(new Employee("alejandra", 111));
+Collections.max(list, Comparator.comparing(Employee::getName));
+Collections.max(list, Comparator.comparing(Employee::getAge));
+```
